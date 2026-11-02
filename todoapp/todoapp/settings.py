@@ -89,7 +89,7 @@ DATABASES = {
     u'default': {
         u'ENGINE': u'django.db.backends.postgresql',
         u'NAME': u'todos',                      # Add database name.
-        u'USER': u'postgres',              # Add psql user name. For default use postgres.
+        u'USER': u'django',              # Add psql user name. For default use postgres.
         u'PASSWORD': u'1234',                  # Add user password if exists.
         u'HOST': u'',                      # Set to empty string for localhost..
         u'PORT': u'5432',                  # Psql service running port.
