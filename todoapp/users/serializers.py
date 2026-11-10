@@ -7,13 +7,13 @@ from django.contrib.auth.hashers import make_password
 
 
 # Add your serializers
-class UserSerializerWithoutId(serializers.ModelSerializer):
+class UserSerializerWithoutIdSerializer(serializers.ModelSerializer):
     class Meta:
         model = get_user_model()
         fields = ["first_name", "last_name", "email"]
 
 
-class UserSerializerWithId(serializers.ModelSerializer):
+class UserSerializerWithIdSerializer(serializers.ModelSerializer):
     class Meta:
         model = get_user_model()
         fields = ["id", "first_name", "last_name", "email"]
