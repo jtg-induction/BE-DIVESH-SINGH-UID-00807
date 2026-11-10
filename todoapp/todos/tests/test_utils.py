@@ -1962,12 +1962,28 @@ class ORMUtilTest(TestSetupMixin, TestCase):
                 "completed_projects": ["Project B", "Project J"],
             },
             {
+                "first_name": "Sunny",
+                "last_name": "Singhal",
+                "email": "sunny.singhal@joshtechnologygroup.com",
+                "to_do_projects": ["Project F"],
+                "in_progress_projects": ["Project C"],
+                "completed_projects": ["Project I"],
+            },
+            {
                 "first_name": "Gurpreet",
                 "last_name": "Singh",
                 "email": "gurpreet.singh@joshtechnologygroup.com",
                 "to_do_projects": ["Project A", "Project F"],
                 "in_progress_projects": [],
                 "completed_projects": ["Project J"],
+            },
+            {
+                "first_name": "Chirag",
+                "last_name": "Gupta",
+                "email": "chirag.gupta@joshtechnologygroup.com",
+                "to_do_projects": ["Project F", "Project K"],
+                "in_progress_projects": ["Project C", "Project E"],
+                "completed_projects": ["Project I"],
             },
             {
                 "first_name": "Naveen",
@@ -1984,22 +2000,6 @@ class ORMUtilTest(TestSetupMixin, TestCase):
                 "to_do_projects": ["Project K"],
                 "in_progress_projects": ["Project G"],
                 "completed_projects": ["Project B"],
-            },
-            {
-                "first_name": "Sunny",
-                "last_name": "Singhal",
-                "email": "sunny.singhal@joshtechnologygroup.com",
-                "to_do_projects": ["Project F"],
-                "in_progress_projects": ["Project C"],
-                "completed_projects": ["Project I"],
-            },
-            {
-                "first_name": "Chirag",
-                "last_name": "Gupta",
-                "email": "chirag.gupta@joshtechnologygroup.com",
-                "to_do_projects": ["Project F", "Project K"],
-                "in_progress_projects": ["Project C", "Project E"],
-                "completed_projects": ["Project I"],
             },
         ]
 
