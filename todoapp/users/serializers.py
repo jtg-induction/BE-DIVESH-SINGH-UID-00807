@@ -17,3 +17,10 @@ class UserSerializerWithIdSerializer(serializers.ModelSerializer):
     class Meta:
         model = get_user_model()
         fields = ["id", "first_name", "last_name", "email"]
+
+
+class UserCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = get_user_model()
+        fields = ["name", "first_name", "last_name", "email", "date_joined", "token"]
+        read_only_fields = ["date_joined", "token"]
