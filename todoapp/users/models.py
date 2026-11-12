@@ -12,7 +12,6 @@ class UserManager(BaseUserManager):
     """
 
 
-
 class CustomUser(AbstractBaseUser, PermissionsMixin):
     """
     Needed fields
@@ -27,4 +26,3 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     """
 
     objects = UserManager()
-

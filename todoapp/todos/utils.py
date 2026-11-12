@@ -1,4 +1,5 @@
 import json
+
 # Add code to this util to return all users list in specified format.
 # [ {
 #   "id": 1,
@@ -14,6 +15,7 @@ import json
 # }]
 # Note: use serializer for generating this format.
 # use json.load(json.dumps(serializer.data)) while returning data from this function for test cases to pass.
+
 
 def fetch_all_users():
     """
@@ -303,4 +305,3 @@ def fetch_user_wise_project_status():
     """
     # Write your code here
     pass
-
