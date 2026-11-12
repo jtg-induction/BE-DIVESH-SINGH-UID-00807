@@ -32,7 +32,6 @@ class TodoAPIViewSet(ModelViewSet):
     ]
     """
 
-    permission_classes = [IsAuthenticated]
     pagination_class = StandardResultsSetPagination
 
     def perform_create(self, serializer):
