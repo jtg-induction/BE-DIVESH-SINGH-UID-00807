@@ -23,17 +23,15 @@ class TodoAPIViewSet(APITestCase):
         self.detail_url = reverse(
             "todos:todos-detail", kwargs={"pk": self.test_todo.pk}
         )
+        self.client.force_authenticate(user=self.test_user)
 
     def test_can_create_a_new_todo(self):
-        data = {"name": "Learn Django Testing", "user": 456}
+        data = {"name": "Learn Django Testing"}
         response = self.client.post(self.list_url, data=data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertTrue(Todo.objects.filter(name="Learn Django Testing").exists())
 
     def test_can_not_create_a_new_todo(self):
-        data = {"user": 456}
-        response = self.client.post(self.list_url, data=data)
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         data = {}
         response = self.client.post(self.list_url, data=data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -51,7 +49,7 @@ class TodoAPIViewSet(APITestCase):
         self.assertTrue(self.test_todo.done)
 
     def test_data_with_user_id(self):
-        response = self.client.get(self.list_url, {"user_id": 456})
+        response = self.client.get(self.list_url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(1, response.data["count"])
 
