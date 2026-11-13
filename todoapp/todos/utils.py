@@ -1,10 +1,9 @@
 import json
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.db.models import Count, Case, When, Prefetch, Q
-from django.utils.dateparse import parse_datetime
 from django.contrib.auth import get_user_model
 from .models import Todo
-from projects.models import Project, ProjectMember
+from projects.models import Project
 from .serializers import (
     AllTodoListWithUserDetailsSerializer,
     UserTodoStatsSerializer,
@@ -16,6 +15,8 @@ from projects.serializers import (
     ProjectStatusSerializer,
 )
 from users.serializers import UserSerializerWithIdSerializer
+
+User = get_user_model()
 
 # Add code to this util to return all users list in specified format.
 # [ {
@@ -40,7 +41,7 @@ def fetch_all_users():
     :return: list of dicts - List of users data
     """
     # Write your code here
-    user = get_user_model().objects.values("id", "first_name", "last_name", "email")
+    user = User.objects.values("id", "first_name", "last_name", "email")
     serializer = UserSerializerWithIdSerializer(user, many=True)
     return serializer.data
 
@@ -134,7 +135,7 @@ def fetch_users_todo_stats():
     :return: list of dicts -  List of users with stats
     """
     # Write your code
-    user = get_user_model().objects.annotate(
+    user = User.objects.annotate(
         completed_count=Count(Case(When(todo__done=True, then=1))),
         pending_count=Count(Case(When(todo__done=False, then=1))),
     )
@@ -166,9 +167,9 @@ def fetch_five_users_with_max_pending_todos():
     """
     # Write your code here
     user = (
-        get_user_model()
-        .objects.annotate(pending_count=Count(Case(When(todo__done=False, then=1))))
-        .order_by("-pending_count")
+        User.objects.annotate(
+            pending_count=Count(Case(When(todo__done=False, then=1)))
+        ).order_by("-pending_count")
     )[:5]
     serializer = UserPendingTodosSerializer(user, many=True)
     return serializer.data
@@ -200,11 +201,9 @@ def fetch_users_with_n_pending_todos(n):
     :return: list of dicts -  List of users
     """
     # Write your code here
-    user = (
-        get_user_model()
-        .objects.annotate(pending_count=Count(Case(When(todo__done=False, then=1))))
-        .filter(pending_count=n)
-    )
+    user = User.objects.annotate(
+        pending_count=Count(Case(When(todo__done=False, then=1)))
+    ).filter(pending_count=n)
     serializer = UserPendingTodosSerializer(user, many=True)
     return serializer.data
 
@@ -311,14 +310,10 @@ def fetch_project_wise_report():
     :return: list of dicts - List of report data
     """
     # Write your code here
-    user = (
-        get_user_model()
-        .objects.annotate(
-            completed_count=Count(Case(When(todo__done=True, then=1))),
-            pending_count=Count(Case(When(todo__done=False, then=1))),
-        )
-        .order_by("email")
-    )
+    user = User.objects.annotate(
+        completed_count=Count(Case(When(todo__done=True, then=1))),
+        pending_count=Count(Case(When(todo__done=False, then=1))),
+    ).order_by("email")
     project = Project.objects.prefetch_related(Prefetch("members", queryset=user))
     serializer = ProjectReportSerializer(project, many=True)
     return serializer.data
@@ -354,7 +349,7 @@ def fetch_user_wise_project_status():
     :return: list of dicts - List of user project data
     """
     # Write your code here
-    user = get_user_model().objects.annotate(
+    user = User.objects.annotate(
         to_do_projects=ArrayAgg(
             Case(When(project__status=0, then="project__name")),
             filter=Q(project__status=0),

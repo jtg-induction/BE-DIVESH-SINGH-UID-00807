@@ -5,17 +5,19 @@ from django.contrib.auth import authenticate
 from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import make_password
 
+User = get_user_model()
+
 
 # Add your serializers
 class UserSerializerWithoutIdSerializer(serializers.ModelSerializer):
     class Meta:
-        model = get_user_model()
+        model = User
         fields = ["first_name", "last_name", "email"]
 
 
 class UserSerializerWithIdSerializer(serializers.ModelSerializer):
     class Meta:
-        model = get_user_model()
+        model = User
         fields = ["id", "first_name", "last_name", "email"]
 
 
@@ -24,7 +26,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
     confirm_password = serializers.CharField(write_only=True)
 
     class Meta:
-        model = get_user_model()
+        model = User
         fields = [
             "first_name",
             "last_name",
@@ -50,7 +52,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         email = validated_data.pop("email")
         password = validated_data.pop("password")
-        confirm_password = validated_data.pop("confirm_password")
+        validated_data.pop("confirm_password")
         User = get_user_model().objects.create_user(
             email=email, password=password, **validated_data
         )
