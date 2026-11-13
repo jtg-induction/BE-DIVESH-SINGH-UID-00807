@@ -5,15 +5,17 @@ from django.contrib.auth import authenticate
 from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import make_password
 
+User = get_user_model()
+
 
 # Add your serializers
 class UserSerializerWithoutIdSerializer(serializers.ModelSerializer):
     class Meta:
-        model = get_user_model()
+        model = User
         fields = ["first_name", "last_name", "email"]
 
 
 class UserSerializerWithIdSerializer(serializers.ModelSerializer):
     class Meta:
-        model = get_user_model()
+        model = User
         fields = ["id", "first_name", "last_name", "email"]

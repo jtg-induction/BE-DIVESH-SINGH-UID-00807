@@ -1,9 +1,10 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
-from django.utils.dateparse import parse_datetime
 from .models import Todo
 from users.serializers import UserSerializerWithoutIdSerializer
 from users.serializers import UserSerializerWithIdSerializer
+
+User = get_user_model()
 
 
 # Add your serializer(s) here
@@ -33,7 +34,7 @@ class UserTodoStatsSerializer(serializers.ModelSerializer):
     pending_count = serializers.IntegerField()
 
     class Meta:
-        model = get_user_model()
+        model = User
         fields = list(UserSerializerWithIdSerializer.Meta.fields) + [
             "completed_count",
             "pending_count",
@@ -44,7 +45,7 @@ class UserPendingTodosSerializer(serializers.ModelSerializer):
     pending_count = serializers.IntegerField()
 
     class Meta:
-        model = get_user_model()
+        model = User
         fields = list(UserSerializerWithIdSerializer.Meta.fields) + ["pending_count"]
 
 
@@ -53,7 +54,7 @@ class UserWithoutIdTodoStatsSerializer(serializers.ModelSerializer):
     pending_count = serializers.IntegerField()
 
     class Meta:
-        model = get_user_model()
+        model = User
         fields = list(UserSerializerWithoutIdSerializer.Meta.fields) + [
             "pending_count",
             "completed_count",
