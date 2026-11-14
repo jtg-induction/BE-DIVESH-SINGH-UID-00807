@@ -4,5 +4,5 @@ from django.apps import AppConfig
 
 
 class ProjectConfig(AppConfig):
-    name = 'projects'
-    verbose_name = 'Projects sample application'
+    name = "projects"
+    verbose_name = "Projects sample application"

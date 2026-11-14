@@ -1,10 +1,10 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
-from django.utils.dateparse import parse_datetime
-from django.utils import timezone
 from .models import Todo
 from users.serializers import UserSerializerWithoutIdSerializer
 from users.serializers import UserSerializerWithIdSerializer
+
+User = get_user_model()
 
 
 # Add your serializer(s) here
@@ -34,7 +34,7 @@ class UserTodoStatsSerializer(serializers.ModelSerializer):
     pending_count = serializers.IntegerField()
 
     class Meta:
-        model = get_user_model()
+        model = User
         fields = list(UserSerializerWithIdSerializer.Meta.fields) + [
             "completed_count",
             "pending_count",
@@ -45,7 +45,7 @@ class UserPendingTodosSerializer(serializers.ModelSerializer):
     pending_count = serializers.IntegerField()
 
     class Meta:
-        model = get_user_model()
+        model = User
         fields = list(UserSerializerWithIdSerializer.Meta.fields) + ["pending_count"]
 
 
@@ -54,7 +54,7 @@ class UserWithoutIdTodoStatsSerializer(serializers.ModelSerializer):
     pending_count = serializers.IntegerField()
 
     class Meta:
-        model = get_user_model()
+        model = User
         fields = list(UserSerializerWithoutIdSerializer.Meta.fields) + [
             "pending_count",
             "completed_count",
@@ -71,21 +71,8 @@ class TodoCreateSerializer(serializers.ModelSerializer):
 class TodoUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Todo
-        fields = ["name", "done", "date_created", "date_completed"]
-        read_only_fields = ["date_created"]
+        fields = ["id", "name", "done", "date_completed"]
         #  Hide  from the outgoing GET/POST JSON response
         extra_kwargs = {
-            "date_completed": {"write_only": True},
-        }
-
-
-class TodoModelSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Todo
-        fields = ["name", "done", "date_created", "user", "date_completed"]
-        read_only_fields = ["date_created"]
-        #  Hide  from the outgoing GET/POST JSON response
-        extra_kwargs = {
-            "user": {"write_only": True},
             "date_completed": {"write_only": True},
         }

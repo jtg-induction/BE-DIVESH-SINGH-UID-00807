@@ -49,7 +49,7 @@ class TodoAPIViewSet(ModelViewSet):
             return TodoUpdateSerializer
 
         # Fallback serializer for list/retrieve actions
-        return TodoCreateSerializer
+        return TodoUpdateSerializer
 
     def perform_update(self, serializer):
         current_instance = self.get_object()
