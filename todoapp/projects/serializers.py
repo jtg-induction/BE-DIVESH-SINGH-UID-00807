@@ -39,3 +39,7 @@ class ProjectStatusSerializer(serializers.ModelSerializer):
             "in_progress_projects",
             "completed_projects",
         ]
+
+
+class AddProjectMemberSerializer(serializers.Serializer):
+    user_ids = serializers.ListField()
