@@ -25,24 +25,25 @@ class TodoAPIViewSet(APITestCase):
         )
 
     def test_can_create_a_new_todo(self):
-        data = {"name": "Learn Django Testing", "user": 456}
+        self.client.force_authenticate(user=self.test_user)
+        data = {"name": "Learn Django Testing"}
         response = self.client.post(self.list_url, data=data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertTrue(Todo.objects.filter(name="Learn Django Testing").exists())
 
     def test_can_not_create_a_new_todo(self):
-        data = {"user": 456}
-        response = self.client.post(self.list_url, data=data)
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.client.force_authenticate(user=self.test_user)
         data = {}
         response = self.client.post(self.list_url, data=data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_get_single_data(self):
+        self.client.force_authenticate(user=self.test_user)
         response = self.client.get(self.detail_url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_can_update_a_todo(self):
+        self.client.force_authenticate(user=self.test_user)
         data = {"done": True}
         response = self.client.patch(self.detail_url, data=data)
 
@@ -51,10 +52,16 @@ class TodoAPIViewSet(APITestCase):
         self.assertTrue(self.test_todo.done)
 
     def test_data_with_user_id(self):
-        response = self.client.get(self.list_url, {"user_id": 456})
+        self.client.force_authenticate(user=self.test_user)
+        response = self.client.get(self.list_url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(1, response.data["count"])
 
     def test_can_delete_a_todo(self):
+        self.client.force_authenticate(user=self.test_user)
         response = self.client.delete(self.detail_url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+    def test_an_unauthorized_access(self):
+        response = self.client.get(self.list_url)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
