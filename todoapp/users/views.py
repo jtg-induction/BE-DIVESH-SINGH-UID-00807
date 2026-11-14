@@ -1,13 +1,12 @@
-from rest_framework import status
+from rest_framework import mixins, generics, status
 from rest_framework.views import APIView
-from rest_framework.generics import CreateAPIView
-from rest_framework import mixins, generics
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from django.contrib.auth import get_user_model
 from rest_framework.authtoken.models import Token
 from .serializers import UserCreateSerializer, UserLoginSerializer
 
+User=get_user_model()
 
 class UserRegistrationAPIView(generics.GenericAPIView, mixins.CreateModelMixin):
     """
@@ -42,7 +41,7 @@ class UserLoginAPIView(APIView):
         serializer = UserLoginSerializer(data=request.data)
         if serializer.is_valid():
             user = (
-                get_user_model()
+                User
                 .objects.filter(email=serializer.validated_data["email"])
                 .first()
             )

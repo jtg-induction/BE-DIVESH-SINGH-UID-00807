@@ -1,8 +1,9 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
-from .models import Project, ProjectMember
+from .models import Project
 from todos.serializers import UserWithoutIdTodoStatsSerializer
-from users.serializers import UserSerializerWithoutIdSerializer
+
+User = get_user_model()
 
 
 class ProjectsDetailsSerializer(serializers.ModelSerializer):
@@ -29,7 +30,7 @@ class ProjectStatusSerializer(serializers.ModelSerializer):
     completed_projects = serializers.ListField()
 
     class Meta:
-        model = get_user_model()
+        model = User
         fields = [
             "first_name",
             "last_name",

@@ -8,12 +8,45 @@ from rest_framework.views import APIView
 from .models import Project, ProjectMember
 from .serializers import AddProjectMemberSerializer
 
+User = get_user_model()
+
 
 class ProjectMemberApiViewSet(APIView):
     """
-    Constraints:
-     - A user can be a member of max 2 projects only.
-     - A project can have at max N members defined in database for each project.
+    constraints
+     - a user can be a member of max 2 projects only
+     - a project can have at max N members defined in database for each project
+    functionalities
+    - add users to projects
+
+      Request
+      { user_ids: [1,2,...n] }
+      Response
+      {
+        logs: {
+          <user_id>: <status messages>
+        }
+      }
+      following are the possible status messages
+      case1: if user is added successfully then - "Member added Successfully"
+      case2: if user is already a member then - "User is already a Member"
+      case3: if user is already added to 2 projects - "Cannot add as User is a member in two projects"
+
+      there will be many other cases think of that
+
+    - update to remove users from projects
+
+      Request
+      { user_ids: [1,2,...n] }
+
+      Response
+      {
+        logs: {
+          <user_id>: <status messages>
+        }
+      }
+
+      there will be many other cases think of that and share on forum
     """
 
     permission_classes = [IsAdminUser]
@@ -46,7 +79,7 @@ class ProjectMemberApiViewSet(APIView):
             return None, None, None
 
         valid_user_ids = set(
-            get_user_model()
+            User
             .objects.select_for_update()
             .filter(id__in=user_ids)
             .values_list("id", flat=True)
