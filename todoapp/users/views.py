@@ -5,6 +5,7 @@ from rest_framework.permissions import AllowAny
 from django.contrib.auth import get_user_model
 from rest_framework.authtoken.models import Token
 from .serializers import UserCreateSerializer, UserLoginSerializer
+from .constants import INVALID_CREDENTIAL
 
 User=get_user_model()
 
@@ -51,7 +52,7 @@ class UserLoginAPIView(APIView):
                 token, _ = Token.objects.get_or_create(user=user)
                 return Response({"auth_token": token.key}, status=status.HTTP_200_OK)
             return Response(
-                {"error": "Invalid email or password"},
+                {"error":INVALID_CREDENTIAL},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

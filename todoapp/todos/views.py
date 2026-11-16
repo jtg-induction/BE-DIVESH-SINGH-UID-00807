@@ -1,7 +1,6 @@
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import AllowAny
 from rest_framework.pagination import PageNumberPagination
-from django.utils import timezone
 from .models import Todo
 from .serializers import TodoCreateSerializer, TodoUpdateSerializer
 
@@ -44,19 +43,4 @@ class TodoAPIViewSet(ModelViewSet):
     def get_serializer_class(self):
         if self.action == "create":
             return TodoCreateSerializer
-        elif self.action in ["update", "partial_update"]:
-            return TodoUpdateSerializer
-
-        # Fallback serializer for list/retrieve actions
         return TodoUpdateSerializer
-
-    def perform_update(self, serializer):
-        current_instance = self.get_object()
-        new_done_status = serializer.validated_data.get("done", current_instance.done)
-        if new_done_status and not current_instance.done:
-            date_completed = timezone.now()
-        elif not new_done_status:
-            date_completed = None
-        else:
-            date_completed = current_instance.date_completed
-        serializer.save(date_completed=date_completed)
