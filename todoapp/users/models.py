@@ -1,5 +1,3 @@
-from __future__ import unicode_literals
-
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.models import BaseUserManager
 from django.contrib.auth.models import PermissionsMixin
@@ -32,7 +30,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     Needed fields
     - password (already inherited from AbstractBaseUser; encrypt password before saving to database)
     - last_login (already inherited from AbstractBaseUser)
-    - is_superuser
+    - is_superuser(already inherited from PermissionMixin)
     - first_name (max_length=30)
     - email (should be unique)
     - is_staff
@@ -44,8 +42,10 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     last_name = models.CharField(max_length=150)
     email = models.EmailField(unique=True)
     is_staff = models.BooleanField(default=False)
-    is_superuser = models.BooleanField(default=False)
     date_joined = models.DateTimeField(default=timezone.now)
+    
     objects = UserManager()
+    
     USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = []
+    REQUIRED_FIELDS = ["first_name","last_name"]
+    
