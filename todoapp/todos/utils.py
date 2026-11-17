@@ -41,8 +41,8 @@ def fetch_all_users():
     :return: list of dicts - List of users data
     """
     # Write your code here
-    user = User.objects.values("id", "first_name", "last_name", "email")
-    serializer = UserSerializerWithIdSerializer(user, many=True)
+    users = User.objects.values("id", "first_name", "last_name", "email")
+    serializer = UserSerializerWithIdSerializer(users, many=True)
     return serializer.data
 
 
@@ -77,8 +77,8 @@ def fetch_all_todo_list_with_user_details():
     :return: list of dicts - List of todos
     """
     # Write your code here
-    todo = Todo.objects.select_related("user").all()
-    serializer = AllTodoListWithUserDetailsSerializer(todo, many=True)
+    todos = Todo.objects.select_related("user").all()
+    serializer = AllTodoListWithUserDetailsSerializer(todos, many=True)
     return serializer.data
 
 
@@ -105,8 +105,8 @@ def fetch_projects_details():
     :return: list of dicts - List of project with details
     """
     # Write your code here
-    project = Project.objects.annotate(existing_member_count=Count("members"))
-    serializer = ProjectsDetailsSerializer(project, many=True)
+    projects = Project.objects.annotate(existing_member_count=Count("members"))
+    serializer = ProjectsDetailsSerializer(projects, many=True)
     return serializer.data
 
 
@@ -135,11 +135,11 @@ def fetch_users_todo_stats():
     :return: list of dicts -  List of users with stats
     """
     # Write your code
-    user = User.objects.annotate(
-        completed_count=Count(Case(When(todo__done=True, then=1))),
-        pending_count=Count(Case(When(todo__done=False, then=1))),
+    users = User.objects.annotate(
+        completed_count=Count("todo",filter=Q(todo__done=True)),
+        pending_count=Count("todo",filter=Q(todo__done=False)),
     )
-    serializer = UserTodoStatsSerializer(user, many=True)
+    serializer = UserTodoStatsSerializer(users, many=True)
     return serializer.data
 
 
@@ -166,12 +166,12 @@ def fetch_five_users_with_max_pending_todos():
     :return: list of dicts -  List of users
     """
     # Write your code here
-    user = (
+    users = (
         User.objects.annotate(
-            pending_count=Count(Case(When(todo__done=False, then=1)))
-        ).order_by("-pending_count")
+            pending_count=Count("todo",filter=Q(todo__done=False))
+        ).order_by("-pending_count",'email')
     )[:5]
-    serializer = UserPendingTodosSerializer(user, many=True)
+    serializer = UserPendingTodosSerializer(users, many=True)
     return serializer.data
 
 
@@ -201,10 +201,10 @@ def fetch_users_with_n_pending_todos(n):
     :return: list of dicts -  List of users
     """
     # Write your code here
-    user = User.objects.annotate(
-        pending_count=Count(Case(When(todo__done=False, then=1)))
+    users = User.objects.annotate(
+        pending_count=Count("todo",filter=Q(todo__done=False))
     ).filter(pending_count=n)
-    serializer = UserPendingTodosSerializer(user, many=True)
+    serializer = UserPendingTodosSerializer(users, many=True)
     return serializer.data
 
 
@@ -310,12 +310,12 @@ def fetch_project_wise_report():
     :return: list of dicts - List of report data
     """
     # Write your code here
-    user = User.objects.annotate(
-        completed_count=Count(Case(When(todo__done=True, then=1))),
-        pending_count=Count(Case(When(todo__done=False, then=1))),
+    users = User.objects.annotate(
+        completed_count=Count("todo",filter=Q(todo__done=True)),
+        pending_count=Count("todo",filter=Q(todo__done=False)),
     ).order_by("email")
-    project = Project.objects.prefetch_related(Prefetch("members", queryset=user))
-    serializer = ProjectReportSerializer(project, many=True)
+    projects = Project.objects.prefetch_related(Prefetch("members", queryset=users))
+    serializer = ProjectReportSerializer(projects, many=True)
     return serializer.data
 
 
@@ -349,22 +349,22 @@ def fetch_user_wise_project_status():
     :return: list of dicts - List of user project data
     """
     # Write your code here
-    user = User.objects.annotate(
+    users = User.objects.annotate(
         to_do_projects=ArrayAgg(
-            Case(When(project__status=0, then="project__name")),
-            filter=Q(project__status=0),
+            Case(When(project__status=Project.TO_BE_STARTED, then="project__name")),
+            filter=Q(project__status=Project.TO_BE_STARTED),
             default=[],
         ),
         in_progress_projects=ArrayAgg(
-            Case(When(project__status=1, then="project__name")),
-            filter=Q(project__status=1),
+            Case(When(project__status=Project.IN_PROGRESS, then="project__name")),
+            filter=Q(project__status=Project.IN_PROGRESS),
             default=[],
         ),
         completed_projects=ArrayAgg(
-            Case(When(project__status=2, then="project__name")),
-            filter=Q(project__status=2),
+            Case(When(project__status=Project.COMPLETED, then="project__name")),
+            filter=Q(project__status=Project.COMPLETED),
             default=[],
         ),
     )
-    serializer = ProjectStatusSerializer(user, many=True)
+    serializer = ProjectStatusSerializer(users, many=True)
     return serializer.data

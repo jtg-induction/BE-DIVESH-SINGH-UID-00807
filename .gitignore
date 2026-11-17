@@ -21,3 +21,5 @@ __pycache__/
 
 .coverage
 todoapp/.coverage
+# Allow template files (the ! explicitly un-ignores it)
+!.env.template

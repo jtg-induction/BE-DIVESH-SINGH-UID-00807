@@ -23,3 +23,17 @@ class Todo(models.Model):
     done = models.BooleanField(default=False)
     date_created = models.DateTimeField(default=timezone.now)
     date_completed = models.DateTimeField(null=True, blank=True)
+    
+    def save(self, *args, **kwargs):
+        if self.pk:
+            current_instance = type(self).objects.get(pk=self.pk)
+            if self.done and not current_instance.done:
+                self.date_completed = timezone.now()
+            elif not self.done:
+                self.date_completed = None
+
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.name
+    

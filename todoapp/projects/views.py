@@ -7,6 +7,17 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from .models import Project, ProjectMember
 from .serializers import AddProjectMemberSerializer
+from .constants import (
+    CAN_NOT_ADD_USER_DUE_TO_ALREADY_IN_N_PROJECTS,
+    INVALID_PROJECT_ID,
+    PROJECT_IS_FULL,
+    PROJECT_NOT_FOUND,
+    SUCCESSFULLY_ADD_IN_PROJECT,
+    SUCCESSFULLY_REMOVE_FROM_PROJECT,
+    USER_IS_ALREADY_PROJECT_MEMBER,
+    USER_IS_NOT_PROJECT_MEMBER,
+    USER_NOT_FOUND,
+)
 
 User = get_user_model()
 
@@ -66,7 +77,7 @@ class ProjectMemberApiViewSet(APIView):
                 None,
                 None,
                 Response(
-                    {"error": "Valid project id query parameter is required"},
+                    {"error": INVALID_PROJECT_ID},
                     status=status.HTTP_400_BAD_REQUEST,
                 ),
             )
@@ -102,7 +113,7 @@ class ProjectMemberApiViewSet(APIView):
             )
             if project is None:
                 return Response(
-                    {"error": "Project Not Found"}, status=status.HTTP_404_NOT_FOUND
+                    {"error":PROJECT_NOT_FOUND}, status=status.HTTP_404_NOT_FOUND
                 )
 
             existing_member_count = ProjectMember.objects.filter(
@@ -118,19 +129,19 @@ class ProjectMemberApiViewSet(APIView):
             new_members = []
             for u in user_ids:
                 if u not in valid_user_ids:
-                    data[u] = "Not Found User"
+                    data[u] =USER_NOT_FOUND
                 elif u in existing_members:
-                    data[u] = "User is already a Member"
+                    data[u] = USER_IS_ALREADY_PROJECT_MEMBER
                 elif user_project_counts.get(u, 0) >= 2:
-                    data[u] = "Cannot add as User is a member in two projects"
+                    data[u] = CAN_NOT_ADD_USER_DUE_TO_ALREADY_IN_N_PROJECTS
                 elif existing_member_count >= project.max_members:
-                    data[u] = "Project is Already Full"
+                    data[u] = PROJECT_IS_FULL
                 else:
                     new_members.append(
                         ProjectMember(member_id=u, project_id=project_id)
                     )
                     existing_member_count += 1
-                    data[u] = "Member added Successfully"
+                    data[u] = SUCCESSFULLY_ADD_IN_PROJECT
 
             if new_members:
                 ProjectMember.objects.bulk_create(new_members)
@@ -149,19 +160,19 @@ class ProjectMemberApiViewSet(APIView):
             )
             if project is None:
                 return Response(
-                    {"error": "Project Not Found"}, status=status.HTTP_404_NOT_FOUND
+                    {"error":PROJECT_NOT_FOUND}, status=status.HTTP_404_NOT_FOUND
                 )
 
             data = {}
             remove_members = []
             for u in user_ids:
                 if u not in valid_user_ids:
-                    data[u] = "Not Found User"
+                    data[u] = USER_NOT_FOUND
                 elif u not in existing_members:
-                    data[u] = "User is Not a Member"
+                    data[u] = USER_IS_NOT_PROJECT_MEMBER
                 else:
                     remove_members.append(u)
-                    data[u] = "Member Removed Successfully"
+                    data[u] = SUCCESSFULLY_REMOVE_FROM_PROJECT
 
             if remove_members:
                 ProjectMember.objects.filter(
