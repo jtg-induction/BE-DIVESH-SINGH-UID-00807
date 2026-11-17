@@ -18,6 +18,3 @@ __pycache__/
 
 # Local database
 *.sqlite3
-
-# Allow template files (the ! explicitly un-ignores it)
-!.env.template
