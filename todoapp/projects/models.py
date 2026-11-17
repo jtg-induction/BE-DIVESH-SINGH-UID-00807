@@ -12,15 +12,18 @@ class Project(models.Model):
 
     Add string representation for this model with project name.
     """
-
+    TO_BE_STARTED = 0
+    IN_PROGRESS = 1
+    COMPLETED = 2
+    
     STATUS_CHOICES = [
-        (0, "To be started"),
-        (1, "In progress"),
-        (2, "Completed"),
+        (TO_BE_STARTED, "To be started"),
+        (IN_PROGRESS, "In progress"),
+        (COMPLETED, "Completed"),
     ]
     name = models.CharField(max_length=100)
     max_members = models.PositiveIntegerField()
-    status = models.IntegerField(choices=STATUS_CHOICES, default=0)
+    status = models.IntegerField(choices=STATUS_CHOICES, default=TO_BE_STARTED)
     members = models.ManyToManyField(settings.AUTH_USER_MODEL, through="ProjectMember")
 
     def __str__(self):
@@ -46,3 +49,5 @@ class ProjectMember(models.Model):
                 fields=["project", "member"], name="unique_project_member"
             )
         ]
+    def __str__(self):
+        return f"{self.member.first_name} {self.member.last_name}-{self.project.name}"

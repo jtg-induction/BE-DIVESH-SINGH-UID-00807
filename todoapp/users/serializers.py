@@ -4,15 +4,9 @@ from django.utils.translation import gettext_lazy as _
 from django.contrib.auth import authenticate
 from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import make_password
+from .constants import INVALID_PASSWORD
 
 User = get_user_model()
-
-
-# Add your serializers
-class UserSerializerWithoutIdSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ["first_name", "last_name", "email"]
 
 
 class UserSerializerWithIdSerializer(serializers.ModelSerializer):
@@ -21,16 +15,19 @@ class UserSerializerWithIdSerializer(serializers.ModelSerializer):
         fields = ["id", "first_name", "last_name", "email"]
 
 
-class UserCreateSerializer(serializers.ModelSerializer):
+class UserSerializerWithoutIdSerializer(UserSerializerWithIdSerializer):
+    class Meta:
+        model = User
+        fields = [fields for fields in UserSerializerWithIdSerializer.Meta.fields if fields !='id']
+        
+
+class UserCreateSerializer(UserSerializerWithoutIdSerializer):
     token = serializers.SerializerMethodField()
     confirm_password = serializers.CharField(write_only=True)
 
     class Meta:
         model = User
-        fields = [
-            "first_name",
-            "last_name",
-            "email",
+        fields = UserSerializerWithoutIdSerializer.Meta.fields+[
             "password",
             "confirm_password",
             "date_joined",
@@ -46,7 +43,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         if attrs["password"] != attrs["confirm_password"]:
-            raise serializers.ValidationError({"password": "Passwords do not match."})
+            raise serializers.ValidationError({"password": INVALID_PASSWORD})
         return attrs
 
     def create(self, validated_data):
