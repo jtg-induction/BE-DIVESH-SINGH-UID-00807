@@ -7,7 +7,8 @@ from rest_framework.authtoken.models import Token
 from .serializers import UserCreateSerializer, UserLoginSerializer
 from .constants import INVALID_CREDENTIAL
 
-User=get_user_model()
+User = get_user_model()
+
 
 class UserRegistrationAPIView(generics.GenericAPIView, mixins.CreateModelMixin):
     """
@@ -41,18 +42,14 @@ class UserLoginAPIView(APIView):
     def post(self, request):
         serializer = UserLoginSerializer(data=request.data)
         if serializer.is_valid():
-            user = (
-                User
-                .objects.filter(email=serializer.validated_data["email"])
-                .first()
-            )
+            user = User.objects.filter(email=serializer.validated_data["email"]).first()
             if user is not None and user.check_password(
                 serializer.validated_data["password"]
             ):
                 token, _ = Token.objects.get_or_create(user=user)
                 return Response({"auth_token": token.key}, status=status.HTTP_200_OK)
             return Response(
-                {"error":INVALID_CREDENTIAL},
-                status=status.HTTP_400_BAD_REQUEST,
+                {"error": INVALID_CREDENTIAL},
+                status=status.HTTP_401_UNAUTHORIZED,
             )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

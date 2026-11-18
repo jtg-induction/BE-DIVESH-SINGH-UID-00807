@@ -32,8 +32,8 @@ class UserRegistrationAPIViewTestCase(APITestCase):
             "first_name": "divesh",
             "last_name": "singh",
             "email": "test@testuser.com",
-            "password": "123123",
-            "confirm_password": "123123",
+            "password": "adm1212in@098765",
+            "confirm_password": "adm1212in@098765",
         }
         response = self.client.post(self.url, user_data)
         self.assertEqual(201, response.status_code)
@@ -47,8 +47,8 @@ class UserRegistrationAPIViewTestCase(APITestCase):
             "first_name": "divesh",
             "last_name": "singh",
             "email": "test@testuser.com",
-            "password": "123123",
-            "confirm_password": "123123",
+            "password": "adm1212in@098765",
+            "confirm_password": "adm1212in@098765",
         }
         response = self.client.post(self.url, user_data_1)
         self.assertEqual(201, response.status_code)
@@ -57,8 +57,8 @@ class UserRegistrationAPIViewTestCase(APITestCase):
             "first_name": "divesh",
             "last_name": "singh",
             "email": "test@testuser.com",
-            "password": "123123",
-            "confirm_password": "123123",
+            "password": "adm1212in@098765",
+            "confirm_password": "adm1212in@098765",
         }
         response = self.client.post(self.url, user_data_2)
         self.assertEqual(400, response.status_code)
@@ -80,7 +80,7 @@ class UserLoginAPIViewTestCase(APITestCase):
         response = self.client.post(
             self.url, {"email": self.email, "password": "I_know"}
         )
-        self.assertEqual(400, response.status_code)
+        self.assertEqual(401, response.status_code)
 
     def test_authentication_with_valid_data(self):
         response = self.client.post(

@@ -1,13 +1,7 @@
 from rest_framework.viewsets import ModelViewSet
-from rest_framework.pagination import PageNumberPagination
 from .models import Todo
+from .pagination import StandardResultsSetPagination
 from .serializers import TodoCreateSerializer, TodoUpdateSerializer
-
-
-class StandardResultsSetPagination(PageNumberPagination):
-    page_size = 10
-    page_size_query_param = "limit"
-    max_page_size = 100
 
 
 class TodoAPIViewSet(ModelViewSet):
@@ -28,13 +22,16 @@ class TodoAPIViewSet(ModelViewSet):
       }
     ]
     """
+
     pagination_class = StandardResultsSetPagination
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
     def get_queryset(self):
-        self.queryset = Todo.objects.filter(user_id=self.request.user.id).order_by("id")
+        self.queryset = Todo.objects.filter(user_id=self.request.user.id).order_by(
+            "-date_created"
+        )
         return self.queryset
 
     def get_serializer_class(self):
