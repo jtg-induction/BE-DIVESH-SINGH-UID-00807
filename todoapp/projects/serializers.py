@@ -42,4 +42,4 @@ class ProjectStatusSerializer(serializers.ModelSerializer):
 
 
 class AddProjectMemberSerializer(serializers.Serializer):
-    user_ids = serializers.ListField()
+    user_ids = serializers.ListField(child=serializers.IntegerField())

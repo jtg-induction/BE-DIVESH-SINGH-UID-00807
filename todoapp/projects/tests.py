@@ -69,7 +69,7 @@ class ProjectMemberApiTests(APITestCase):
             {"user_ids": [self.user1.id]},
         )
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-        self.assertEqual(response.data["error"], "Project Not Found")
+        self.assertEqual(response.data["error"], "Project not found.")
 
     def test_add_members_success(self):
         response = self.client.post(
@@ -80,8 +80,8 @@ class ProjectMemberApiTests(APITestCase):
         self.assertEqual(
             response.data["logs"],
             {
-                self.user1.id: "Member added Successfully",
-                self.user2.id: "Member added Successfully",
+                self.user1.id: "Member added successfully.",
+                self.user2.id: "Member added successfully.",
             },
         )
         self.assertEqual(
@@ -113,13 +113,13 @@ class ProjectMemberApiTests(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         logs = response.data["logs"]
-        self.assertEqual(logs[self.user1.id], "User is already a Member")
+        self.assertEqual(logs[self.user1.id], "User is already a member.")
         self.assertEqual(
             logs[self.user2.id], "Cannot add as User is a member in two projects"
         )
-        self.assertEqual(logs[self.user3.id], "Member added Successfully")
-        self.assertEqual(logs[self.user4.id], "Project is Already Full")
-        self.assertEqual(logs[9999], "Not Found User")
+        self.assertEqual(logs[self.user3.id], "Member added successfully.")
+        self.assertEqual(logs[self.user4.id], "Project is already full.")
+        self.assertEqual(logs[9999], "User not found.")
 
     def test_add_members_returns_200_when_none_added(self):
         ProjectMember.objects.create(project=self.project_main, member=self.user1)
@@ -139,9 +139,9 @@ class ProjectMemberApiTests(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         logs = response.data["logs"]
-        self.assertEqual(logs[self.user1.id], "Member Removed Successfully")
-        self.assertEqual(logs[self.user2.id], "User is Not a Member")
-        self.assertEqual(logs[9999], "Not Found User")
+        self.assertEqual(logs[self.user1.id], "Member removed successfully.")
+        self.assertEqual(logs[self.user2.id], "User is not a member.")
+        self.assertEqual(logs[9999], "User not found.")
         self.assertFalse(
             ProjectMember.objects.filter(
                 project=self.project_main, member=self.user1

@@ -90,8 +90,7 @@ class ProjectMemberApiViewSet(APIView):
             return None, None, None
 
         valid_user_ids = set(
-            User
-            .objects.select_for_update()
+            User.objects.select_for_update()
             .filter(id__in=user_ids)
             .values_list("id", flat=True)
         )
@@ -113,7 +112,7 @@ class ProjectMemberApiViewSet(APIView):
             )
             if project is None:
                 return Response(
-                    {"error":PROJECT_NOT_FOUND}, status=status.HTTP_404_NOT_FOUND
+                    {"error": PROJECT_NOT_FOUND}, status=status.HTTP_404_NOT_FOUND
                 )
 
             existing_member_count = ProjectMember.objects.filter(
@@ -129,7 +128,7 @@ class ProjectMemberApiViewSet(APIView):
             new_members = []
             for u in user_ids:
                 if u not in valid_user_ids:
-                    data[u] =USER_NOT_FOUND
+                    data[u] = USER_NOT_FOUND
                 elif u in existing_members:
                     data[u] = USER_IS_ALREADY_PROJECT_MEMBER
                 elif user_project_counts.get(u, 0) >= 2:
@@ -160,7 +159,7 @@ class ProjectMemberApiViewSet(APIView):
             )
             if project is None:
                 return Response(
-                    {"error":PROJECT_NOT_FOUND}, status=status.HTTP_404_NOT_FOUND
+                    {"error": PROJECT_NOT_FOUND}, status=status.HTTP_404_NOT_FOUND
                 )
 
             data = {}

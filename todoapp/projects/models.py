@@ -12,10 +12,11 @@ class Project(models.Model):
 
     Add string representation for this model with project name.
     """
+
     TO_BE_STARTED = 0
     IN_PROGRESS = 1
     COMPLETED = 2
-    
+
     STATUS_CHOICES = [
         (TO_BE_STARTED, "To be started"),
         (IN_PROGRESS, "In progress"),
@@ -49,5 +50,6 @@ class ProjectMember(models.Model):
                 fields=["project", "member"], name="unique_project_member"
             )
         ]
+
     def __str__(self):
         return f"{self.member.first_name} {self.member.last_name}-{self.project.name}"
