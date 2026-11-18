@@ -5,7 +5,7 @@ from django.core.exceptions import  ValidationError
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth import authenticate
 from django.contrib.auth import get_user_model
-from .constants import INVALID_PASSWORD
+from .constants import PASSWORD_MISMATCH
 
 User = get_user_model()
 
@@ -23,7 +23,7 @@ class UserSerializerWithoutIdSerializer(UserSerializerWithIdSerializer):
         
 
 class UserCreateSerializer(UserSerializerWithoutIdSerializer):
-    token = serializers.SerializerMethodField()
+    token = serializers.SerializerMethodField(read_only=True)
     confirm_password = serializers.CharField(write_only=True)
 
     class Meta:
@@ -39,8 +39,8 @@ class UserCreateSerializer(UserSerializerWithoutIdSerializer):
         }
 
     def get_token(self, obj):
-        token, _ = Token.objects.get_or_create(user=obj)
-        return token.key
+        token = Token.objects.filter(user=obj).first()
+        return token.key if token else None
     
     def validate_password(self, value):
         try:
@@ -51,7 +51,7 @@ class UserCreateSerializer(UserSerializerWithoutIdSerializer):
     
     def validate(self, attrs):
         if attrs["password"] != attrs["confirm_password"]:
-            raise serializers.ValidationError({"password": INVALID_PASSWORD})
+            raise serializers.ValidationError({"password": PASSWORD_MISMATCH})
         return attrs
 
     def create(self, validated_data):
@@ -61,6 +61,7 @@ class UserCreateSerializer(UserSerializerWithoutIdSerializer):
         User = get_user_model().objects.create_user(
             email=email, password=password, **validated_data
         )
+        Token.objects.get_or_create(user=User)
         return User
 
 
