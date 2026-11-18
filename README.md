@@ -8,8 +8,8 @@ It is a to-do application where users can manage their to-do items. Users can al
 * Users can join and collaborate on projects as members.
 
 ## Prerequisites
-* Python 3.8 or higher
-* Django 4.x
+* Python >=3.8, <=3.12
+* Django 4.2
 * Django REST Framework (DRF)
 * PostgreSQL
 
@@ -59,7 +59,7 @@ Start the Django development server:
 ```bash
 python manage.py runserver
 ```
-The API will be available at `http://127.0.0`.
+The API will be available at `http://127.0.0.1:8000`.
 
 ## License
 Distributed under the MIT License.

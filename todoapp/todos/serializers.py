@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 from .models import Todo
 from users.serializers import UserSerializerWithoutIdSerializer
 from users.serializers import UserSerializerWithIdSerializer
-from .constants import TO_DO,DONE,DATE_FORMAT
+from .constants import TODO_STATUS_PENDING,TODO_STATUS_DONE,DATE_FORMAT
 
 User = get_user_model()
 
@@ -19,7 +19,7 @@ class AllTodoListWithUserDetailsSerializer(serializers.ModelSerializer):
         fields = ["id", "name", "status", "created_at", "creator"]
 
     def get_status(self, obj):
-        return DONE if obj.done else TO_DO
+        return TODO_STATUS_DONE if obj.done else TODO_STATUS_PENDING
 
     def get_created_at(self, obj):
         created_date = obj.date_created
