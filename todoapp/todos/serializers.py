@@ -58,13 +58,7 @@ class UserWithoutIdTodoStatsSerializer(UserTodoStatsSerializer):
 class TodoCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Todo
-        fields = ["name", "user", "done", "date_created"]
-        read_only_fields = ["done", "date_created"]
+        fields = ["id","name", "user", "done", "date_created"]
+        read_only_fields = ["date_created"]
         #  Hide  from the outgoing GET/POST JSON response
         extra_kwargs = {"user": {"write_only": True}}
-
-
-class TodoUpdateSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Todo
-        fields = ["id", "name", "done"]

@@ -1,5 +1,5 @@
 from rest_framework.pagination import PageNumberPagination
-from .constants import(PAGE_SIZE,PAGE_SIZE_QUERY_PARAM,MAX_PAGE_SIZE)
+from .constants import PAGE_SIZE, PAGE_SIZE_QUERY_PARAM, MAX_PAGE_SIZE
 
 
 class StandardResultsSetPagination(PageNumberPagination):

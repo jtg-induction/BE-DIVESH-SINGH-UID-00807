@@ -25,7 +25,7 @@ class TodoAPIViewSet(APITestCase):
         )
 
     def test_can_create_a_new_todo(self):
-        data = {"name": "Learn Django Testing", "user": 456}
+        data = {"name": "Learn Django Testing","user": 456}
         response = self.client.post(self.list_url, data=data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertTrue(Todo.objects.filter(name="Learn Django Testing").exists())
