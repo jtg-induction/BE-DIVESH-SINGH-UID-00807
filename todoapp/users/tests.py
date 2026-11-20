@@ -68,9 +68,10 @@ class UserLoginAPIViewTestCase(APITestCase):
     url = reverse("users:login")
 
     def setUp(self):
-        self.email = "john@snow.com"
-        self.password = "you_know_nothing"
+        self.email = "test@testuser.com"
+        self.password = "adm1212in@098765"
         self.user = get_user_model().objects.create_user(self.email, self.password)
+        Token.objects.create(key="jvbdjfbvudbgdfj",user=self.user)
 
     def test_authentication_without_password(self):
         response = self.client.post(self.url, {"email": self.email})
