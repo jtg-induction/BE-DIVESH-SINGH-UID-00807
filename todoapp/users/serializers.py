@@ -1,9 +1,8 @@
 from rest_framework import serializers
 from rest_framework.authtoken.models import Token
 from django.contrib.auth.password_validation import validate_password
-from django.core.exceptions import  ValidationError 
+from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
-from django.contrib.auth import authenticate
 from django.contrib.auth import get_user_model
 from .constants import PASSWORD_MISMATCH
 
@@ -19,8 +18,12 @@ class UserSerializerWithIdSerializer(serializers.ModelSerializer):
 class UserSerializerWithoutIdSerializer(UserSerializerWithIdSerializer):
     class Meta:
         model = User
-        fields = [fields for fields in UserSerializerWithIdSerializer.Meta.fields if fields !='id']
-        
+        fields = [
+            fields
+            for fields in UserSerializerWithIdSerializer.Meta.fields
+            if fields != "id"
+        ]
+
 
 class UserCreateSerializer(UserSerializerWithoutIdSerializer):
     token = serializers.SerializerMethodField(read_only=True)
@@ -28,7 +31,7 @@ class UserCreateSerializer(UserSerializerWithoutIdSerializer):
 
     class Meta:
         model = User
-        fields = UserSerializerWithoutIdSerializer.Meta.fields+[
+        fields = UserSerializerWithoutIdSerializer.Meta.fields + [
             "password",
             "confirm_password",
             "date_joined",
@@ -41,14 +44,14 @@ class UserCreateSerializer(UserSerializerWithoutIdSerializer):
     def get_token(self, obj):
         token = Token.objects.filter(user=obj).first()
         return token.key if token else None
-    
+
     def validate_password(self, value):
         try:
             validate_password(value)
         except ValidationError as e:
             raise serializers.ValidationError(list(e.messages))
         return value
-    
+
     def validate(self, attrs):
         if attrs["password"] != attrs["confirm_password"]:
             raise serializers.ValidationError({"password": PASSWORD_MISMATCH})

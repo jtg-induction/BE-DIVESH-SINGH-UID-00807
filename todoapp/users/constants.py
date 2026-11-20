@@ -1,2 +1,2 @@
-PASSWORD_MISMATCH ="Passwords do not match."
-INVALID_CREDENTIAL="Invalid email or password"
+PASSWORD_MISMATCH = "Passwords do not match."
+INVALID_CREDENTIAL = "Invalid email or password"

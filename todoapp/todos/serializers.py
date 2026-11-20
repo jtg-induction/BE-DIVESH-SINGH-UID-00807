@@ -39,7 +39,6 @@ class UserTodoStatsSerializer(serializers.ModelSerializer):
 
 
 class UserPendingTodosSerializer(UserTodoStatsSerializer):
-    pending_count = serializers.IntegerField()
 
     class Meta:
         model = User
@@ -51,8 +50,6 @@ class UserPendingTodosSerializer(UserTodoStatsSerializer):
 
 
 class UserWithoutIdTodoStatsSerializer(UserTodoStatsSerializer):
-    completed_count = serializers.IntegerField()
-    pending_count = serializers.IntegerField()
 
     class Meta:
         model = User
@@ -62,10 +59,16 @@ class UserWithoutIdTodoStatsSerializer(UserTodoStatsSerializer):
 
 
 class TodoCreateSerializer(serializers.ModelSerializer):
+    date_created=serializers.SerializerMethodField()
+    
     class Meta:
         model = Todo
         fields = ["name", "done", "date_created"]
         read_only_fields = ["done", "date_created"]
+
+    def get_date_created(self,obj):
+        created_date = obj.date_created
+        return created_date.strftime(DATE_FORMAT)
 
 
 class TodoUpdateSerializer(serializers.ModelSerializer):

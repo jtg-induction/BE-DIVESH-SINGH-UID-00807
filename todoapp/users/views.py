@@ -21,7 +21,7 @@ class UserRegistrationAPIView(generics.GenericAPIView, mixins.CreateModelMixin):
        "token"
      }
     """
-
+    
     permission_classes = [AllowAny]
     serializer_class = UserCreateSerializer
 

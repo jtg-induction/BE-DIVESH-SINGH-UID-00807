@@ -4,6 +4,7 @@ from django.contrib import admin
 api_urls = [
     path("todos/", include("todos.urls")),
     path("users/", include("users.urls")),
+    path("projects/", include("projects.urls")),
 ]
 
 urlpatterns = [
