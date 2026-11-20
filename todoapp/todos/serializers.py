@@ -39,7 +39,6 @@ class UserTodoStatsSerializer(serializers.ModelSerializer):
 
 
 class UserPendingTodosSerializer(UserTodoStatsSerializer):
-    pending_count = serializers.IntegerField()
 
     class Meta:
         model = User
@@ -51,8 +50,6 @@ class UserPendingTodosSerializer(UserTodoStatsSerializer):
 
 
 class UserWithoutIdTodoStatsSerializer(UserTodoStatsSerializer):
-    completed_count = serializers.IntegerField()
-    pending_count = serializers.IntegerField()
 
     class Meta:
         model = User

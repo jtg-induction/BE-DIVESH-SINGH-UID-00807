@@ -46,7 +46,7 @@ class UserLoginAPIView(APIView):
             if user is not None and user.check_password(
                 serializer.validated_data["password"]
             ):
-                token, _ = Token.objects.get_or_create(user=user)
+                token= Token.objects.get(user=user)
                 return Response({"auth_token": token.key}, status=status.HTTP_200_OK)
             return Response(
                 {"error": INVALID_CREDENTIAL},
