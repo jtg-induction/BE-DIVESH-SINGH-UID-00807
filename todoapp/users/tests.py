@@ -15,6 +15,8 @@ class UserRegistrationAPIViewTestCase(APITestCase):
         Test to verify that a post call with invalid passwords
         """
         user_data = {
+            "first_name": "divesh",
+            "last_name": "singh",
             "email": "test@testuser.com",
             "password": "password",
             "confirm_password": "INVALID_PASSWORD",
@@ -27,9 +29,11 @@ class UserRegistrationAPIViewTestCase(APITestCase):
         Test to verify that a post call with user valid data
         """
         user_data = {
+            "first_name": "divesh",
+            "last_name": "singh",
             "email": "test@testuser.com",
-            "password": "123123",
-            "confirm_password": "123123",
+            "password": "adm1212in@098765",
+            "confirm_password": "adm1212in@098765",
         }
         response = self.client.post(self.url, user_data)
         self.assertEqual(201, response.status_code)
@@ -40,17 +44,21 @@ class UserRegistrationAPIViewTestCase(APITestCase):
         Test to verify that a post call with already exists email
         """
         user_data_1 = {
+            "first_name": "divesh",
+            "last_name": "singh",
             "email": "test@testuser.com",
-            "password": "123123",
-            "confirm_password": "123123",
+            "password": "adm1212in@098765",
+            "confirm_password": "adm1212in@098765",
         }
         response = self.client.post(self.url, user_data_1)
         self.assertEqual(201, response.status_code)
 
         user_data_2 = {
+            "first_name": "divesh",
+            "last_name": "singh",
             "email": "test@testuser.com",
-            "password": "123123",
-            "confirm_password": "123123",
+            "password": "adm1212in@098765",
+            "confirm_password": "adm1212in@098765",
         }
         response = self.client.post(self.url, user_data_2)
         self.assertEqual(400, response.status_code)
@@ -60,9 +68,10 @@ class UserLoginAPIViewTestCase(APITestCase):
     url = reverse("users:login")
 
     def setUp(self):
-        self.email = "john@snow.com"
-        self.password = "you_know_nothing"
+        self.email = "test@testuser.com"
+        self.password = "adm1212in@098765"
         self.user = get_user_model().objects.create_user(self.email, self.password)
+        Token.objects.create(key="jvbdjfbvudbgdfj",user=self.user)
 
     def test_authentication_without_password(self):
         response = self.client.post(self.url, {"email": self.email})
@@ -72,7 +81,7 @@ class UserLoginAPIViewTestCase(APITestCase):
         response = self.client.post(
             self.url, {"email": self.email, "password": "I_know"}
         )
-        self.assertEqual(400, response.status_code)
+        self.assertEqual(401, response.status_code)
 
     def test_authentication_with_valid_data(self):
         response = self.client.post(
