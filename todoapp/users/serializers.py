@@ -55,12 +55,8 @@ class UserCreateSerializer(UserSerializerWithoutIdSerializer):
         return attrs
 
     def create(self, validated_data):
-        email = validated_data.pop("email")
-        password = validated_data.pop("password")
         validated_data.pop("confirm_password")
-        User = get_user_model().objects.create_user(
-            email=email, password=password, **validated_data
-        )
+        User = get_user_model().objects.create_user(**validated_data)
         Token.objects.get_or_create(user=User)
         return User
 
