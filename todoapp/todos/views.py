@@ -1,10 +1,7 @@
 from rest_framework.viewsets import ModelViewSet
-from rest_framework.permissions import AllowAny
-from rest_framework.exceptions import ValidationError,NotFound
 from .models import Todo
 from .pagination import StandardResultsSetPagination
 from .serializers import TodoCreateSerializer, TodoUpdateSerializer
-from .constants import USER_ID_MUST_BE_POSITIVE,NO_TODOS_FOR_USER
 
 
 class TodoAPIViewSet(ModelViewSet):
@@ -26,22 +23,15 @@ class TodoAPIViewSet(ModelViewSet):
     ]
     """
 
-    permission_classes = [AllowAny]
     pagination_class = StandardResultsSetPagination
 
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
     def get_queryset(self):
-        self.queryset = Todo.objects.all().order_by("-date_created")
-        user_id = self.request.query_params.get("user_id")
-        if user_id:
-            try:
-                user_id = int(user_id)
-                if(user_id<=0):
-                    raise ValueError
-            except ValueError:
-                raise ValidationError({"error":USER_ID_MUST_BE_POSITIVE})
-            self.queryset = Todo.objects.filter(user_id=user_id).order_by("-date_created")
-            if not self.queryset.exists():
-                raise NotFound({"error":NO_TODOS_FOR_USER})
+        self.queryset = Todo.objects.filter(user_id=self.request.user.id).order_by(
+            "-date_created"
+        )
         return self.queryset
 
     def get_serializer_class(self):

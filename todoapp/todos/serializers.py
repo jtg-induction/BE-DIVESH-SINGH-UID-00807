@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 from .models import Todo
 from users.serializers import UserSerializerWithoutIdSerializer
 from users.serializers import UserSerializerWithIdSerializer
-from .constants import TODO_STATUS_PENDING,TODO_STATUS_DONE,DATE_FORMAT
+from .constants import TODO_STATUS_PENDING, TODO_STATUS_DONE, DATE_FORMAT
 
 User = get_user_model()
 
@@ -43,7 +43,11 @@ class UserPendingTodosSerializer(UserTodoStatsSerializer):
 
     class Meta:
         model = User
-        fields = [fields for fields in UserTodoStatsSerializer.Meta.fields if fields != 'completed_count']
+        fields = [
+            fields
+            for fields in UserTodoStatsSerializer.Meta.fields
+            if fields != "completed_count"
+        ]
 
 
 class UserWithoutIdTodoStatsSerializer(UserTodoStatsSerializer):
@@ -52,16 +56,16 @@ class UserWithoutIdTodoStatsSerializer(UserTodoStatsSerializer):
 
     class Meta:
         model = User
-        fields = [fields for fields in UserTodoStatsSerializer.Meta.fields if fields !='id']
+        fields = [
+            fields for fields in UserTodoStatsSerializer.Meta.fields if fields != "id"
+        ]
 
 
 class TodoCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Todo
-        fields = ["name", "user", "done", "date_created"]
+        fields = ["name", "done", "date_created"]
         read_only_fields = ["done", "date_created"]
-        #  Hide  from the outgoing GET/POST JSON response
-        extra_kwargs = {"user": {"write_only": True}}
 
 
 class TodoUpdateSerializer(serializers.ModelSerializer):
